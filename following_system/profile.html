@@ -1,0 +1,29 @@
+{% load 'static' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <title>Document</title>
+</head>
+<body>
+    
+    <p>profile</p>
+    {{user.first_name}}-{{user.last_name}}
+    {{user.username}}
+
+    {% if user.id != request.user.id and not is_follow %}
+        <button id="#following" data-id={{user.id}} class="btn bnt-primary" >follow</button>
+    {% elife %}
+        <button id="#following" data-id={{user.id}} class="btn btn-warning" >unfollow</button>
+    {% endif %}
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="ajax.js"></script>
+</body>
+</html>
