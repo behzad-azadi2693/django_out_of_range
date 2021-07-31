@@ -12,9 +12,10 @@ def phone_login(request):
             global phone, rand_num 
             phone = f'0{form.cleaned_data['number']}'
             rand_num = randint(1000, 9999)
-            params = ('sender':'numer_get_of_kavenegar', 'receptor':phone, 'message':rand_num)
+            api = KavenegarAPI('Your APIKey', timeout=20)
+            params = {'sender':'numer_get_of_kavenegar', 'receptor':phone, 'message':rand_num}
             api.sms_send(params)
-            return render('accounts:verify')
+            return redirect('accounts:verify')
     else:
         form = PhoneLoginForm()
     return render(request, 'number.html', {'form':form})
