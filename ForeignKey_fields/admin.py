@@ -11,6 +11,8 @@ class BookAdmin(admin.ModelAdmin):
     def image_tag(self, obj):
         return mark_safe('<img src="{url}" width="50" height="50" />'.format(url=obj.image.url,))
 
+    def has_change_permission(self, request, obj=None):
+        return False    
     
     def has_delete_permission(self, request, obj=None):
         return False
