@@ -1,6 +1,8 @@
 # more about django
 
 ```
+basket order save in cookie
+
 system following
 
 system liking
