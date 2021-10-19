@@ -4,49 +4,58 @@ from urllib import parse
 
 time = datetime.now() + timedelta(hours=4)
 
-def get_list_item_cart(request):
+def get_list_key_cart(request, key):
     if request.COOKIES.get('item_cart'):
         get_item_cart_in_cookie = request.COOKIES['item_cart']
         
         str_convert_to_list = list(get_item_cart_in_cookie.split(';'))
-        item_list = []
-        for item in str_convert_to_list:
-           index_convert_to_dict = ast.literal_eval(item)
-           item_list.append(str(index_convert_to_dict['item']))
+        key_list = []
+        if key == 'quantity':
+            for obj in str_convert_to_list:
+                index_convert_to_dict = ast.literal_eval(obj)
+                key_list.append(int(index_convert_to_dict[key])
+        else:
+            for obj in str_convert_to_list:
+                index_convert_to_dict = ast.literal_eval(obj)
+                key_list.append(str(index_convert_to_dict[key]))
         
-        return item_list
+        return key_list
 
-def get_list_quantities_cart(request):
-    if request.COOKIES.get('item_cart'):
-        get_item_cart_in_cookie = request.COOKIES['item_cart']
-        
-        str_convert_to_list = list(get_item_cart_in_cookie.split(';'))
-        quantity_list = []
-        for item in str_convert_to_list:
-            index_convert_to_dict = ast.literal_eval(item)
-            quantity_list.append(int(index_convert_to_dict['quantity']))
-        
-        return quantity_list
 
 def len_item_in_cart(request):
     if request.COOKIES.get('item_cart'):
-        list_item = get_list_item_cart(request)
+        list_item = get_list_key_cart(request, "item")
         return len(list_item)
 
     return 0
 
 def check_item_in_cart(request, item):
-    if str(item) in get_list_item_cart(request):
+    if str(item) in get_list_key_cart(request, "item"):
         return True
 
     else:
         return False
-
-def add_to_cart(request, response, item, quantity=1):
+                                
+def check_obj_in_cart(request, key_str):
+    items = get_list_key_cart(request, "item")
+    sizes = get_list_key_cart(request, "size")
+    colors = get_list_key_cart(request, "color")
+    key_list = []
+    for index in len(items):
+        key = f'{items[index]}-{sizes[index]}-{colors[index]}'
+        key_list.append(key)
+                                
+    if str(key_str) in key_list:
+        return True
+    else:
+        return False
+                                
+def add_to_cart(request, response, item, quantity=1, size=None, color=None):
     if request.COOKIES.get('item_cart') is not None:
-        if not check_item_in_cart(request, item):
+        key_str = f'{item}-{size}-{color}'
+        if not check_obj_in_cart(request, key_str):
             item_in_cookie = request.COOKIES['item_cart']
-            new_item = {"item":item,"quantity":quantity}
+            new_item = {"item":item,"quantity":quantity, "size":size, "color":color}
             data = item_in_cookie+f';{new_item}'
             response.set_cookie('item_cart', data, expires=time)
             
@@ -55,16 +64,16 @@ def add_to_cart(request, response, item, quantity=1):
             response.set_cookie('item_count', number, expires=time)
 
     else:
-        new_item = {"item":item,"quantity":quantity}
+        new_item = {"item":item,"quantity":quantity, "size":size, "color":color}
         data = f'{new_item}'
         response.set_cookie('item_cart', data, expires=time)
         response.set_cookie('item_count', 1, expires=time)
 
-def create_sequence_str(request, keys, quantities):
+def create_sequence_str(request, items, quantities, sizes, colors):
     str_ = "first"
     for index in range(len_item_in_cart(request)):
         if index < 1:
-            new_item = {"item":keys[index],"quantity":quantities[index]}
+            new_item = {"item":keys[index],"quantity":quantities[index], "size":sizes[index], "color":colors[index]}
             if index < 1:
                 str_ = f'{new_item}'
             else:    
@@ -76,13 +85,17 @@ def delete_item_in_cart(request, response, item):
     if request.COOKIES.get('item_cart'):
         if check_item_in_cart(request, item):
             if len_item_in_cart(request) > 1:
-                keys = get_list_item_cart(request)
-                quantities = get_list_quantities_cart(request)
+                items = get_list_key_cart(request,"item")
+                quantities = get_list_key_cart(request, "quantity")
+                sizes = get_list_key_cart(request, "size")
+                colors = get_list_key_cart(request, "color")
 
                 index = keys.index(item)
-                del keys[index] 
+                del items[index] 
                 del quantities[index]
-                data = create_sequence_str(request, keys, quantities)
+                del sizes[index]
+                del colors[index]
+                data = create_sequence_str(request, items, quantities, sizes, colors)
                 response.set_cookie('item_cart', data, expires=time)
 
                 number = request.COOKIES['item_count']
@@ -100,38 +113,44 @@ def delete_cart(request, response):
 
 def update_quantity_item_cart(request, response, item, quantity):
     if request.COOKIES.get('item_cart') is not None:
-        if check_item_in_cart(request, item):
-            keys = get_list_item_cart(request)
-            quantities = get_list_quantities_cart(request)
+        if check_item_in_cart(request, key_str):
+            items = get_list_key_cart(request, "item")
+            quantities = get_list_key_cart(request, "quantity")
+            sizes = get_list_key_cart(request, "size")
+            colors = get_list_key_cart(request, "color")
 
-            index = keys.index(item)
+            index = keys.index(item)    
             quantities[index] = quantity
-            
-            data = create_sequence_str(request, keys, quantities)
+                             
+            data = create_sequence_str(request, items, quantities, sizes, colors)
             response.set_cookie('item_cart', data, expires=time)
 
 def incr_one_to_quantity(request, response, item):
     if request.COOKIES.get('item_cart') is not None:
         if check_item_in_cart(request, item):
-            keys = get_list_item_cart(request)
-            quantities = get_list_quantities_cart(request)
+            items = get_list_key_cart(request, "item")
+            quantities = get_list_key_cart(request, "quantity")
+            sizes = get_list_key_cart(request, "size")
+            colors = get_list_key_cart(request, "color")
             
             index = keys.index(item)
             quantities[index] = quantities[index] + 1
 
-            data = create_sequence_str(request, keys, quantities)
+            data = create_sequence_str(request, items, quantities, sizes, colors)
             response.set_cookie('item_cart', data, expires=time)
 
 def dicr_one_to_quantity(request, response, item):
     if request.COOKIES.get('item_cart') is not None:
         if check_item_in_cart(request, item):
-            keys = get_list_item_cart(request)
+            items = get_list_item_cart(request)
             quantities = get_list_quantities_cart(request)
-            
+            sizes = get_list_key_cart(request, "size")
+            colors = get_list_key_cart(request, "color")
+                                
             index = keys.index(item)
             quantities[index] = quantities[index] - 1
 
-            data = create_sequence_str(request, keys, quantities)
+            data = create_sequence_str(request, items, quantities, sizes, colors)
             response.set_cookie('item_cart', data, expires=time)
 
 def get_information_user_encode(request, response, address, phone):
