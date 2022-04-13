@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>ID</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for page in this_page %}
+        <tr>
+          <td>{{ page.user }}</td>
+          <td>{{ page.id }}</td>
+          <td>{{ page.name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% if this_page.has_other_pages %}
+  <ul class="pagination">
+    {% if this_page.has_previous %}
+      <li><a href="?page={{ this_page.previous_page_number }}">the old page: {{  old_page.name }}</a></li>
+    {% else %}
+      <li class="disabled"><span></span></li>
+    {% endif %}
+    <li> <--- click for new or old page ---> </li>
+      
+    {% if this_page.has_next %}
+      <li><a href="?page={{ this_page.next_page_number }}">the new page: {{ new_page.name }}</a></li>
+    {% else %}
+      <li class="disabled"><span></span></li>
+    {% endif %}
+  </ul>
+{% endif %}
