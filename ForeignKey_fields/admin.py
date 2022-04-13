@@ -21,3 +21,7 @@ class BookAdmin(admin.ModelAdmin):
         if db_field.name == 'category':
             kwargs['queryset'] = Category.objects.filter(user = request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_queryset(self, request):
+        qs = super(NameOfClassAdmin, self).get_queryset(request)
+        return qs.filter(user = request.user)
