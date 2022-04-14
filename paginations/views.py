@@ -26,11 +26,11 @@ def index(request, pk):
     if this_page.has_next():
         new = id_list[this_page.next_page_number() - 1]
         new_page = paginator.object_list.filter(pk=new).first()
-        context.update({'new_page':new_page})
+        context['new_page'] = new_page
 
     if this_page.has_previous():
         old = id_list[this_page.previous_page_number() - 1]
         old_page = paginator.object_list.filter(pk = old).first()
-        context.update({'old_page':old_page})
+        context['old_page'] = old_page
     
     return render(request, 'index.html', context)
