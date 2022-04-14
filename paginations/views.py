@@ -9,9 +9,9 @@ def index(request, pk):
 
     define = paginator.object_list.filter(pk=pk).first()
     id_list = list(paginator.object_list.values_list(flat=True))
-    define_page = id_list.index(define.id) + 1
+    default_page = id_list.index(define.id) + 1
     
-    page = request.GET.get('page', define_page)
+    page = request.GET.get('page', default_page)
     try:
         this_page = paginator.page(page)
     except PageNotAnInteger:
