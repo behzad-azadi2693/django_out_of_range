@@ -1,5 +1,8 @@
-
+#refrences
 #https://django.cowhite.com/blog/mastering-search-in-django-postgres/
+#https://www.netlandish.com/blog/2020/06/22/full-text-search-django-postgresql/
+
+
 
 from django.shortcuts import render
 from .models import Book
