@@ -180,8 +180,10 @@ class Book(models.Model):
         indexes = [
             GinIndex(fields=["search_field"])]
         
-#views.py in view create     
+#tasks.py in task celery     
 Book.objects.update(search_field=SearchVector('title'))
+دقت کنید که تبدیل یک رشته به یک مقدار سرچ وکتور کار زمانی بری هست 
+لذا با استفاده از سیگنال و سلری آن را در بکند انجام دهید
 
 #views.py in view search
 Book.objects.filter(search_field='name')
