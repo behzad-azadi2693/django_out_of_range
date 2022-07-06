@@ -167,9 +167,24 @@ def search_rank(request):
 سپس می توانید فیلد را جویا شوید که گویی یک سرچ رانک مشروح شده است:
 '''
 
-Book.objects.update(search_vector=SearchVector('title'))
-Book.objects.filter(search_vector='Arthur')
+#model.py
+from django.db import models
+from django.contrib.postgres.search import SearchVector, SearchVectorField      
+from django.contrib.postgres.indexes import GinIndex
 
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    search_field = SearchVectorField(null=True)
+
+    class Meta:
+        indexes = [
+            GinIndex(fields=["search_field"])]
+        
+#views.py in view create     
+Book.objects.update(search_field=SearchVector('title'))
+
+#views.py in view search
+Book.objects.filter(search_field='name')
 
 
 #=====================================TrigramSimilarity=======================================
