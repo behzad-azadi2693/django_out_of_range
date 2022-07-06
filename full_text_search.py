@@ -92,7 +92,30 @@ def search_vectore_with_query(request):
     return render(request, template_name, {'books':books})
 
 
-
+    ***
+    search_type متد سرچ کوری پارامتری میگیرد بنام 
+    در چهار نوع زیر دسته بندی میشند
+    
+    بصمورت پیش فرض بر روی این نوع قرار دارد و رشته قابل سرچ را بصورت عبارات جداگانه در نظر میگیرد plain
+    این نوع تمامی رشته رو یک عبارت واحد در نظر گرفته و سرچ میکند phrase
+    این نوع به شما اجازه میدهد که جستجویی با عملگرها داشته باشید raw
+    این نوع دقیقا مشابه موتورهای جستجو وب عمل میکند که از ورژن ۱۱ پستگرس به بعد اضافه شده است wbsearch
+    ***
+    
+    #plain
+    SearchQuery('firstname lastname') >> 'firstname','lastname' دو بخش جداگانه
+    
+    #phrase
+    SearchQuery('firstname lastname' ,search_type='phrase') >> 'firstname lastname' یک عبارت کامل
+    
+    #raw
+    SearchQuery("'this' & ('name1' | 'name2')" ,search_type='raw') >> 'this name1' or 'tihs name2'
+    
+    #websearch
+    SearchQuery("'this' ('name1' or 'name2')" ,search_type='websearch') >> جستجو مانند موتورهای جستوی وب
+    
+    
+    
 #=====================================SearchRank=======================================
 
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
