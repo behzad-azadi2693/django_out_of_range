@@ -66,7 +66,7 @@ class Order(models.Model):
 
         if self.status_pay == 'PA':
             product = Product.objects.get(id=self.product.id)
-            product.number = product.number - self.number
+            product.number = F("product__number") - self.number
             product.save()
             product.change_number
 
