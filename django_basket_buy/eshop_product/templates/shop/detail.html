@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block body %}
+        <img src="{{prd.image.url}}" style="height: 300px; width: 300px;">
+        <p>{{prd.name}}</p>
+        <p>-ریال{{prd.price}}</p>
+        <p>{{prd.title}}</p>
+        <form action="{% url 'eshop_orders:create' %}" method="POST">
+            {% csrf_token %}
+            {{form.product_id}}
+        
+            تعداد:
+            {{form.count}} 
+            <input type="submit" class="btn btn-success" value="add to basket">            
+        </form>
+
+{% endblock %}

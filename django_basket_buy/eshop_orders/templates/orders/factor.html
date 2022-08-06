@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+{% for order in orders %}
+  <div>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th colspan="5" class="bg-secondary">
+              <small>customer name:</small> <strong>{{request.user.username}} </strong><br>
+              <small>date payment:</small> <strong>{{order.payment_date|date}} </strong> <br>
+              <small>payment cod:</small> {{order.payment_code}}
+
+             </th>
+          </tr>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">name</th>
+            <th scope="col">count</th>
+            <th scope="col">price</th>            
+            <th scope="col">total price</th>            
+          </tr>
+        </thead>
+        <tbody>
+        {% for ord in order.relpay.all %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ord.product.name}}</td>
+              <td>{{ord.count}}</td>
+              <td>{{ord.price}}</td>
+              <td>{{ord.total_price}}</td>             
+            </tr>
+        {% endfor %}
+            <tr>
+              <td></td>
+              <td colspan="5" ><small>total price:</small><strong>{{order.total_price_payment}}</strong></td>
+            </tr>   
+        </tbody>
+    </table>
+    </div>
+    {% endfor %}
+{% endblock %}

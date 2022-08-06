@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+    {% for order in orders %}
+    <table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">image</th>
+            <th scope="col">name</th>
+            <th scope="col">count</th>
+            <th scope="col">price</th>            
+            <th scope="col">total price</th>
+            <th scope="col">Link</th>            
+          </tr>
+        </thead>
+        <tbody>
+        {% for ord in order.relord.all %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td><img src="{{ ord.product.image.url }}" style="height: 150px; width: 150px;" alt=""></td>
+              <td>{{ord.product.name}}</td>
+              <td>{{ord.count}}</td>
+              <td>{{ord.product.price}}</td>              
+              <td>{{ord.total_price}}</td>   
+              <td><a href="{% url 'eshop_product:detail' ord.product.slug%}">show product</a></td>           
+            </tr>
+        {% endfor %}
+            <tr>
+              <td scope='2'></td>
+                <td><a href="{% url 'eshop_orders:delete' order.id %}" class="btn btn-danger">delete order</a>
+                <td><a href="{% url 'eshop_orders:send_request' order.id %}" class="btn btn-primary">payment order</a>
+                <td scope='3'></td>
+                <td><small>payment:</small>{{order.total_price}}</td>
+                
+            </tr>   
+        </tbody>
+    </table>
+    {% endfor %}
+{% endblock %}

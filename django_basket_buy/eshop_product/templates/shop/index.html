@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% for prd in products %}
+        <img src="{{prd.image.url}}" style="width: 150px; height: 150px;">
+        <p>{{prd.name}}-ریال{{prd.price}}</p>
+        <a href="{% url 'eshop_product:detail' prd.slug %}">{{prd.slug}}</a>
+        
+        <hr>
+    {% endfor %}
+{% endblock %}
