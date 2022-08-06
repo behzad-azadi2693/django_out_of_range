@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% for order in orders %}
+
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <td>name: {{ request.user.first_name }} {{request.user.last_name}}</td>
+        </tr>
+        <tr>
+            <td colspan="4"></td>
+            <td><strong>date: </strong> <small>{{ order.created|date }}</small></td>
+        </tr>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">image</th>
+        <th scope="col">unit price</th>
+        <th scope="col"> quantity </th>
+        <th scope="col"> total price </th>
+      </tr>
+    </thead>
+    <tbody>
+            {%for ord in order.items.all %}
+            <tr>
+                <td scope="row">{{ forloop.counter }}</td>
+                <td> {{ ord.product }}</td>
+                <td> {{ord.price}} </td>
+                <td> {{ord.quantity}} </td>
+                <td> {{ ord.get_cost }}</td>
+            </tr>
+
+            {% endfor %}
+        <tr>
+            <td><small>total pay:</small></td>
+            <td colspan="3"></td>
+            <td><strong>{{order.get_total_price}}</strong> </td>
+        </tr>
+        <tr>
+            <td><a href="" class="btn btn-success">factor</a></td>
+        </tr>
+{% endfor %}
+</tbody> 
+</table> 
+{% endblock %}

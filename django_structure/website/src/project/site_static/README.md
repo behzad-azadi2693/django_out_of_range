@@ -1,0 +1,1 @@
+# this directory is for static file templates your apps

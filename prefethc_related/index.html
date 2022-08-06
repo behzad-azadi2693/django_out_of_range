@@ -1,0 +1,10 @@
+{% for a in as %}
+
+<p>a</p>
+{% for f in a.ball.all %}
+
+<p>{{ f.name }}</p>
+<p>{{ f.publish }}</p>
+{% endfor %}
+<hr>
+{% endfor %}

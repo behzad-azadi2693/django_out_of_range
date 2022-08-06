@@ -1,0 +1,36 @@
+<form action="" method="GET">
+
+    <input type="text" placeholder="Country (USA,UK,france)" name="contry" value="{{ old_value.country }}">
+
+    <input type="text" placeholder="City" name="city" value="{{ old_value.city }}">
+
+    {% for key,value in price.items %}
+    <select name='price' class="select" multiple>
+        <option selceted='true' disabled='disabled'>Max Price (All)</option>
+        {% for key,value in price.items %}
+            <option value="{{key}}" {% if key == old_value.price %} selected {% endif %} >{{value}}</option>
+        {% endfor %}
+    </select>
+    
+    {% for key,value in type.items %}
+    <select name='type' class="select" multiple>
+        <option selceted='true' disabled='disabled'>Type (All)</option>
+        {% for key,value in type.items %}
+            <option value="{{key}}"{% if key == old_value.type %} selected {% endif %}>{{value}}</option>    
+        {% endfor %}
+    </select>
+
+    <input type="submit" value="Search">
+
+</form>
+
+{% if query %}
+    {% for q in query %}
+        {{q.image}}
+        {{q.price}}
+        {{q.type}}
+        {{q.number}}
+    {% endfor %}
+{% else %}
+    <p> nothing fund in search</p>
+{%endif%}

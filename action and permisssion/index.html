@@ -1,0 +1,13 @@
+
+{% if perms.myapp.can_show_this %}
+    <div>
+        div1
+    </div>
+{% endif %}
+
+
+{% if perms.myapp.can_read_this %}
+    <div>
+        div2
+    </div>
+{% endif %}

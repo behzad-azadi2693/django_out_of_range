@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: ../../
+      dockerfile: ./Dockerfile.devlopment
+    container_name: '${con_name}'
+    env_file: ../../.env

@@ -1,0 +1,5 @@
+{% for obj in all %}
+    <p>{{ obj.name }}</p>
+    <p> <a href="{% url 'info:detail'  obj.id %}"> show detail</a></p>
+    <hr>
+{% endfor %}

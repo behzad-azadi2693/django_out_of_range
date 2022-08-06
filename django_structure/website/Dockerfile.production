@@ -1,0 +1,9 @@
+FROM alpine
+
+WORKDIR /src/
+
+RUN cd ..
+
+ADD  . /src/
+
+RUN ls

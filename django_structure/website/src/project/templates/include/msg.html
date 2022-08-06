@@ -1,0 +1,6 @@
+{% load static %}
+{% if messages %}
+       {% for msg in messages %}
+               <h4 class="col-md-12 text-center alert alert-{{ msg.tags }}">{{ msg }}</h4>
+       {% endfor %}
+{% endif %}

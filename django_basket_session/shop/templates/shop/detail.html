@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <h1>Hi Cart</h1>
+        <img src="{{ prd.image.url }}" style="height: 150px; width: 150px;" alt=""> <br>
+        <small>name:</small> <strong> {{prd.name}} </strong> <br>
+        <small>slug:</small> <strong> {{prd.slug}} </strong> <br>
+        <small>title:</small> <strong> {{prd.title}} </strong> <br>
+        <small>price:</small> <strong> {{prd.price}} </strong><small>ریال</small> <br>
+        <h3>
+        <form action="{% url 'cart:add' prd.id %}" method="POST">
+            {% csrf_token %}
+            {{form}}
+            <input type="submit" value="add to cart">
+        </form>
+        </h3>
+
+        <hr>
+{% endblock %}

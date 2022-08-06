@@ -1,0 +1,30 @@
+{% load static %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_available_languages as LANGUAGES %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta name="description" mcontent="{% block meta_description %}{% endblock meta_description %}" />
+        <meta name="keywords" content="{% block meta_keywords %} {% endblock meta_keywords %}" />
+
+        {% block meta %}  {% endblock %}
+
+        <title>  |{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="">
+        <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+
+    </head>
+    <body>
+        {% incude 'include/header.html' %}
+        {% incude 'include/msg.html' %}
+        
+        {% block body %} {% endblock %}
+
+        {% include 'include/footer.html' %}
+
+        {% block javascript %} {% endblock %}
+    </body>
+</html>

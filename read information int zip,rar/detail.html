@@ -1,0 +1,5 @@
+<p>{{ obj.name }}</p>
+<p>{{ obj.my_file }}</p>
+{% for obj in all %}
+    <p>{{ obj.0 }} | {{ obj.1|filesizeformat }}</p>
+{% endfor %}
