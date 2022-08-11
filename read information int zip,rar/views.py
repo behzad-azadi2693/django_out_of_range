@@ -196,7 +196,7 @@ def ParsingPackView(request, pk):
     exists_path = 'gallery/parsing_data/'+f'{obj.id}.json'
     if not os.path.isfile(exists_path):
         file_path = obj.public_pack.path
-        fileName = os.path.splitext(file_path.split('/')[-1])
+        fileName,fileExtension  = os.path.splitext(file_path.split('/')[-1])
         if os.path.isfile(file_path) and fileExtension in ['.rar', '.zip', '.7z']:
             dictionary_data = parsing_pack(str(file_path), fileExtension)
             if dictionary_data is not False:
