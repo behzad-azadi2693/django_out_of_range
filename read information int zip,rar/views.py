@@ -31,7 +31,7 @@ def detail(request, pk):
 
 
 
-#----------------------------------------
+#----------------------------------------python
 import os
 from zipfile import ZipFile
 from rarfile import RarFile
@@ -265,3 +265,172 @@ def test_host(request, start, stop):
     return JsonResponse(information_of_query, status=200)
 
             
+    
+    
+    
+#------------------------------python/linux
+
+from genericpath import isfile
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Post
+import subprocess
+import json
+import os
+
+
+def parsing_pack(file_path, fileExtension):
+    
+    if fileExtension == '.rar':
+        try:
+            all = {}
+
+            all_name = list(
+                subprocess.check_output("unrar t {path_file} | sed '1,7d' | sed '$d' | cut -d' ' -f 6- |\
+            tr 'OK' ' ' | rev | sed  -e 's/^[ \t]*//' | cut -d '/' -f -1 | rev | awk '{code};' |tr '\n' ','".format(
+                path_file=str(file_path), code="{print $1}"),shell=True).decode('utf8').split(',')
+            )
+
+            all_size = list(
+                subprocess.check_output("unrar l {path_file} | sed '1,8d' | sed '$d' |\
+                sed '$d' | sed '$d' | awk '{code};'".format(
+                path_file=str(file_path), code="{print $2}"),shell=True).decode('utf8').split('\n')
+            )
+
+            for name,size in zip(all_name, all_size):
+                try:
+                    all[str(name)] = int(int(size))
+                except:
+                    pass
+
+            drcending_sort= dict(sorted(all.items(),key=lambda item:item[1], reverse=True))
+            remove_value_zero = {x:y for x,y in drcending_sort.items() if y!=0}
+
+            return remove_value_zero
+        
+        except:
+            return False
+    
+    elif fileExtension == '.zip':
+        try:
+            all = {}
+
+            all_name = list(
+                subprocess.check_output("zip -sf {path_file} | sed '1d' | sed '$d' |\
+                sed -e 's/^[ \t]*//' | tr ' ' '_' | tr '\n' ','".format(
+                path_file=str(file_path)),shell=True).decode('utf8').split(',')
+            )
+            
+            all_size = list(
+                subprocess.check_output("unzip -l {path_file} | sed '1,3d' |  sed '$d' |\
+                awk '{code};' | grep -v '-'".format(
+                path_file=str(file_path), code="{print $1}"),shell=True).decode('utf8').split('\n')
+            )
+
+            for name,size in zip(all_name, all_size):
+                try:
+                    all[str(name.split('/')[-1])] = int(int(size))
+                except:
+                    pass
+
+            drcending_sort= dict(sorted(all.items(),key=lambda item:item[1], reverse=True))
+            remove_value_zero = {x:y for x,y in drcending_sort.items() if y!=0}
+
+            return remove_value_zero
+        
+        except:
+            return False
+        
+    elif fileExtension == '.7z':
+        try:
+            all = {}
+
+            all_name = list(
+                subprocess.check_output("py7zr l {path_file} | sed '1,3d' | cut -d '/' -f 2 |\
+                grep -v '-' | grep -v '^ ' |  tr ' ', '_' | tr '\n', ','".format(
+                path_file=str(file_path)),shell=True).decode('utf8').split(',')
+            )
+
+            all_size = list(
+                subprocess.check_output("py7zr l {path_file} | sed '1,3d' | awk '{code};' |\
+                grep -v '-'".format(
+                path_file=str(file_path), code="{print $4}"),shell=True).decode('utf8').split('\n')
+            )
+
+            for name,size in zip(all_name, all_size):
+                try:
+                    all[str(name.replace('_', ' '))] = int(int(size))
+                except:
+                    pass
+
+            drcending_sort= dict(sorted(all.items(),key=lambda item:item[1], reverse=True))
+            remove_value_zero = {x:y for x,y in drcending_sort.items() if y!=0}
+
+            return remove_value_zero
+
+        except:
+            return False
+
+    else:
+        return False
+      
+
+def parsing_pack_view(request, pk):
+    obj = get_object_or_404(Post, id=pk)
+    local_path = 'gallery/parsing_data/'+f'{obj.id}.json'
+    file_path = obj.public_pack.path
+    fileName,fileExtension  = os.path.splitext(file_path.split('/')[-1])
+
+    if fileExtension not in ['.rar', '.zip', '.7z']:
+        return JsonResponse({'msg':'format file not supported'}, status=400)
+
+    if os.path.isfile(local_path):
+        try:
+            with open(local_path, "r") as pkl_handle:
+                dictionary_data = json.load(pkl_handle)
+                
+            return JsonResponse(dictionary_data, status=200)
+
+        except:
+            return JsonResponse({'msg':'reading file information with error'}, status=400)
+
+    if os.path.isfile(file_path):
+        dictionary_data = parsing_pack(str(file_path), fileExtension)
+
+        if dictionary_data is not False:
+            try:
+                with open(local_path,"x") as f:
+                     pass
+
+                with open(local_path, "w") as parsing_write:
+                    json.dump(dictionary_data, parsing_write)
+
+                return JsonResponse(dictionary_data, status=200)
+
+            except:
+                return JsonResponse(dictionary_data, status=200)
+
+        else:
+            return JsonResponse({'msg':'parsing data with error'}, status=400)
+
+    else: 
+        host_path = '/mnt/ftp/home3/' + file_path.split('/')[-1]
+        dictionary_data = parsing_pack(str(host_path), fileExtension)
+
+        if dictionary_data is not False:
+            try:
+                with open(local_path,"x") as f:
+                     pass
+
+                with open(local_path, "w") as parsing_write:
+                    json.dump(dictionary_data, parsing_write)
+
+                return JsonResponse(dictionary_data, status=200)
+
+            except:
+                return JsonResponse(dictionary_data, status=200)
+
+        else:
+            return JsonResponse({'msg':'parsing data with error or hosting error'}, status=400)
+    
+
