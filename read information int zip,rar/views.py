@@ -269,7 +269,6 @@ def test_host(request, start, stop):
     
     
 #------------------------------python/linux
-
 from genericpath import isfile
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -286,9 +285,10 @@ def parsing_pack(file_path, fileExtension):
             all = {}
 
             all_name = list(
-                subprocess.check_output("unrar t {path_file} | sed '1,7d' | sed '$d' | cut -d' ' -f 6- |\
-            tr 'OK' ' ' | rev | sed  -e 's/^[ \t]*//' | cut -d '/' -f -1 | rev | awk '{code};' |tr '\n' ','".format(
-                path_file=str(file_path), code="{print $1}"),shell=True).decode('utf8').split(',')
+                subprocess.check_output("unrar l {path_file} | sed '1,8d' | sed '$d' | sed '$d' |\
+                sed '$d' | rev | cut -d ':' -f -1 | rev | cut -d ' ' -f 2- | rev |\
+                cut -d '/' -f -1 | rev | sed  -e 's/^[ \t]*//' | tr ' ' '_' | tr '\n' ','".format(
+                path_file=str(file_path)),shell=True).decode('utf8').split(',')
             )
 
             all_size = list(
@@ -346,8 +346,8 @@ def parsing_pack(file_path, fileExtension):
             all = {}
 
             all_name = list(
-                subprocess.check_output("py7zr l {path_file} | sed '1,3d' | cut -d '/' -f 2 |\
-                grep -v '-' | grep -v '^ ' |  tr ' ', '_' | tr '\n', ','".format(
+                subprocess.check_output("py7zr l 492310.7z | sed '1,4d' | sed '$d' | sed '$d' |\
+                rev | cut -d '/' -f -1 | tr ' ' '_' | rev | tr '\n', ','".format(
                 path_file=str(file_path)),shell=True).decode('utf8').split(',')
             )
 
@@ -399,9 +399,6 @@ def parsing_pack_view(request, pk):
 
         if dictionary_data is not False:
             try:
-                with open(local_path,"x") as f:
-                     pass
-
                 with open(local_path, "w") as parsing_write:
                     json.dump(dictionary_data, parsing_write)
 
@@ -419,9 +416,6 @@ def parsing_pack_view(request, pk):
 
         if dictionary_data is not False:
             try:
-                with open(local_path,"x") as f:
-                     pass
-
                 with open(local_path, "w") as parsing_write:
                     json.dump(dictionary_data, parsing_write)
 
@@ -433,4 +427,6 @@ def parsing_pack_view(request, pk):
         else:
             return JsonResponse({'msg':'parsing data with error or hosting error'}, status=400)
     
+
+
 
