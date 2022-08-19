@@ -27,9 +27,7 @@ class ElasticSearch(ListAPIView):
                     }
                 }
             )
-        
-        for hit in search["hits"]["hits"]:
-            print(hit["_source"]["tag"])
+
         response = [
                 {
                     "id":hit["_source"]["id"].split('.')[-1],
