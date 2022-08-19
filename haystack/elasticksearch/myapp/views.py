@@ -1,45 +1,46 @@
-from .serializers import ListSearchSerializer
-from haystack.query import SearchQuerySet
-from django.db.models import Q
 from rest_framework.generics import ListAPIView
+from rest_framework import serializers
+from .models import Post
 from rest_framework.permissions import AllowAny
+from elasticsearch import Elasticsearch
 
 
-class ElasticSearch1(ListAPIView):
-    serializer_class = ListSearchSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        name = self.request.GET['q']
-        customer = SearchQuerySet().filter(
-            Q(descriptions__fuzzy=name) | Q(title__fuzzy=name))
- 
-        return customer
+class ListSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id','title', 'body', 'technical_tips']
 
 
-class ElasticSearch2(ListAPIView):
+class ElasticSearch(ListAPIView):
     serializer_class = ListSearchSerializer
     permission_classes = [AllowAny]
     
     def get_queryset(self, *args, **kwargs):
         es= Elasticsearch('http://localhost:9200')
-        query_param = self.request.GET.get('q')
+        query_param = self.request.GET.get('search_gallery')
 
-        resp = es.search(
+        search = es.search(
                 index="haystack", 
                 query={
                     "multi_match": {
-                        'query':query_param,'fields':['title','descriptions'],'fuzziness':'AUTO'
+                        'query':query_param,'fields':['title','body','technical_tips', 'tag'],'fuzziness':'AUTO'
                     }
                 }
             )
         
-        all = [
+        for hit in search["hits"]["hits"]:
+            print(hit["_source"]["tag"])
+        response = [
                 {
                     "id":hit["_source"]["id"].split('.')[-1],
                     "title":hit["_source"]["title"],
-                    "descriptions":hit["_source"]["descriptions"]
+                    "body":hit["_source"]["body"],
+                    "technical_tips":hit["_source"]["technical_tips"],
+                    #"tag":list(hit["_source"]["tag"])[0],
                 } 
-                for hit in resp['hits']['hits']
+                for hit in search['hits']['hits']
             ]
  
-        return all
+        return response
+ 
+
