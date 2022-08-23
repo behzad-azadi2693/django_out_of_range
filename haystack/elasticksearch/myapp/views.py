@@ -11,7 +11,7 @@ class ElasticSearch1(ListAPIView):
     permission_classes = [AllowAny]
     
     def get_queryset(self, *args, **kwargs):
-        es= Elasticsearch('http://adminuser:password1234@localhost:9200')
+        es= Elasticsearch('http://username:password@localhost:9200')
         query_param = self.request.GET['search_query']
 
         search = es.search(
