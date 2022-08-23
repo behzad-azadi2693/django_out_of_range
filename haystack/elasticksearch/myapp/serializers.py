@@ -1,7 +1,6 @@
-from rest_framework.serializers import ModelSerializer
-from .models import Blog
+class ListSearchSerializer(serializers.ModelSerializer):
+    image_url = serializers.CharField()
 
-class ListSearchSerializer(ModelSerializer):
     class Meta:
-        model = Blog
-        fields = ['title', 'descriptions']
+        model = Post
+        fields = ['id', 'seo_id', 'title', 'body', 'image_url']
