@@ -6,7 +6,7 @@ from elasticsearch import Elasticsearch
 from .serializers import ListSearchSerializer
 
 
-class ElasticSearchView(ListAPIView):
+class ElasticSearch1(ListAPIView):
     serializer_class = ListSearchSerializer
     permission_classes = [AllowAny]
     
@@ -49,24 +49,7 @@ class ElasticSearchView(ListAPIView):
  
 
 
-
-
-
-'''
-from rest_framework.generics import ListAPIView
-from rest_framework import serializers
-from .models import Post
-from rest_framework.permissions import AllowAny
-from elasticsearch import Elasticsearch
-
-
-class ListSearchSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ['id','title', 'body', 'technical_tips']
-
-
-class ElasticSearch(ListAPIView):
+class ElasticSearch2(ListAPIView):
     serializer_class = ListSearchSerializer
     permission_classes = [AllowAny]
     
@@ -96,4 +79,3 @@ class ElasticSearch(ListAPIView):
  
         return response
  
-'''
