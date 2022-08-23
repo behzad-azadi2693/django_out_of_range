@@ -3,14 +3,7 @@ from rest_framework import serializers
 from .models import Post
 from rest_framework.permissions import AllowAny
 from elasticsearch import Elasticsearch
-
-
-class ListSearchSerializer(serializers.ModelSerializer):
-    image_url = serializers.CharField()
-
-    class Meta:
-        model = Post
-        fields = ['id', 'seo_id', 'title', 'body', 'image_url']
+from .serializers import ListSearchSerializer
 
 
 class ElasticSearchView(ListAPIView):
