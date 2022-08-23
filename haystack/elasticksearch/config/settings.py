@@ -9,7 +9,7 @@ INSTALLED_APPS = [
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch7_backend.Elasticsearch7SearchEngine',
-        'URL': 'http://localhost:9200/',
+        'URL': 'http://username:password@localhost:9200/',
         'INDEX_NAME': 'haystack',
     },
 }
