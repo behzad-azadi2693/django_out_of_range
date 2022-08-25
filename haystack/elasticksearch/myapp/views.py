@@ -61,7 +61,7 @@ class ElasticSearch2(ListAPIView):
                 index="haystack", 
                 query={
                     "multi_match": {
-                        'query':query_param,'fields':['title','body','technical_tips', 'tag'],'fuzziness':'AUTO'
+                        'query':query_param,'fields':['title^3','body^2','technical_tips', 'tag'],'fuzziness':'AUTO'
                     }
                 }
             )
