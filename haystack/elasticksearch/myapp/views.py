@@ -19,8 +19,9 @@ class ElasticSearch1(ListAPIView):
             query = {
                 "bool":{
                     "should":[
+                        {"match_phrase":{"title": {"query": query_param}}},
                         {"match":{"title": {"query": query_param,"fuzziness": "AUTO"}}},
-                        {"match":{"body": {"query": query_param,"fuzziness": "AUTO"}}},
+                        {"match":{"body": {"query": query_param,"fuzziness": "AUTO:8,15"}}},
                         {"match":{"seo_id": {"query": query_param,"fuzziness": "AUTO"}}},
                         {"match":{"tag": {"query": query_param,"fuzziness": "AUTO"}}},
                     ],
@@ -79,3 +80,62 @@ class ElasticSearch2(ListAPIView):
  
         return response
  
+
+    
+#---------------------------------------------------or with db--------------------------------------------------    
+class ElasticSearchView3(ListAPIView):
+    serializer_class = ListSearchSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self, *args, **kwargs):
+        es= Elasticsearch('http://boomilia:boomilia@localhost:9200')
+        query_param = self.request.GET['q']
+
+        search = es.search(
+            index = "haystack", 
+            size = 10000,
+
+            query = {
+                "bool":{
+                    "should":[
+                        {"match_phrase":{"title": {"query": query_param}}},
+                        {"match":{"title": {"query": query_param,"fuzziness": "AUTO"}}},
+                    ],
+
+                },
+
+            },
+            
+        )
+        
+        all_id = [hit["_source"]["id"].split('.')[-1] for hit in search['hits']['hits']]
+        preserved = Case(*[When(id=field, then=position) for position, field in enumerate(all_id)])
+
+        response = Post.objects.filter(id__in = all_id).order_by(preserved)
+
+        return response
+
+
+class ElasticSearchView4(ListAPIView):
+    serializer_class = ListSearchSerializer
+    permission_classes = [AllowAny]
+    def get_queryset(self, *args, **kwargs):
+        es= Elasticsearch('http://username:passwro@localhost:9200')
+        query_param = self.request.GET['q']
+
+        search = es.search(
+                index="haystack", 
+                query={
+                    "multi_match": {
+                        'query':query_param,
+                        'fields':['title^3'],
+                    }
+                }
+            )
+
+        all_id = [hit["_source"]["id"].split('.')[-1] for hit in search['hits']['hits']]
+        preserved = Case(*[When(id=field, then=position) for position, field in enumerate(all_id)])
+
+        response = Post.objects.filter(id__in = all_id).order_by(preserved)
+
+        return response
