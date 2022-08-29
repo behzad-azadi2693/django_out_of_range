@@ -31,7 +31,7 @@ class SeoIdModel(models.Model):
 
 
 class Post(SeoIdModel):
-    tag = models.ManyToManyField(Tags)
+    tags = models.ManyToManyField(Tags)
     title = models.CharField(max_length=250)
     body = models.TextField()
     image = models.ImageField(upload_to = 'post/')
