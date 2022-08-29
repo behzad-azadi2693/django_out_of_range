@@ -33,7 +33,7 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
 class PostIndex(indexes.ModelSearchIndex, indexes.Indexable):
     class Meta:
         model = Post
-        fields = ['text', 'title', 'body', 'tag', 'seo_id', 'image', 'is_active', 'is_remove']
+        fields = ['text', 'title', 'body', 'tags', 'seo_id', 'image', 'is_active', 'is_remove']
  
     def get_model(self):
         return Post
