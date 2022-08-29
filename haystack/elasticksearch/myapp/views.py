@@ -23,7 +23,7 @@ class ElasticSearch1(ListAPIView):
                         {"match":{"title": {"query": query_param,"fuzziness": "AUTO"}}},
                         {"match":{"body": {"query": query_param,"fuzziness": "AUTO:8,15"}}},
                         {"match":{"seo_id": {"query": query_param,"fuzziness": "AUTO"}}},
-                        {"match":{"tag": {"query": query_param,"fuzziness": "AUTO"}}},
+                        {"match":{"tags": {"query": query_param,"fuzziness": "AUTO"}}},
                     ],
                     "filter":[
                         {"term":{"is_active":"true"}},
@@ -41,6 +41,7 @@ class ElasticSearch1(ListAPIView):
                     "seo_id":hit["_source"]["seo_id"],
                     "title":hit["_source"]["title"],
                     "body":hit["_source"]["body"],
+                    "tags":hit["_source"]["tags"],
                     "image_url":hit["_source"]["image_url"],
                 } 
                 for hit in search['hits']['hits']
@@ -73,7 +74,9 @@ class ElasticSearch2(ListAPIView):
                     "title":hit["_source"]["title"],
                     "body":hit["_source"]["body"],
                     "technical_tips":hit["_source"]["technical_tips"],
-                    #"tag":list(hit["_source"]["tag"])[0],
+                    "tags":hit["_source"]["tags"],
+                    "image_url":hit["_source"]["image_url"],
+
                 } 
                 for hit in search['hits']['hits']
             ]
