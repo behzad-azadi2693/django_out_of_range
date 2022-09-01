@@ -21,9 +21,9 @@ class ElasticSearch1(ListAPIView):
                     "should":[
                         {"match_phrase":{"title": {"query": query_param}}},
                         {"match":{"title": {"query": query_param,"fuzziness": "AUTO"}}},
-                        {"match":{"body": {"query": query_param,"fuzziness": "AUTO:8,15"}}},
+                        {"match":{"body": {"query": query_param,"fuzziness": "AUTO:8,15", "operator":"and"}}},
                         {"match":{"seo_id": {"query": query_param,"fuzziness": "AUTO"}}},
-                        {"match":{"tags": {"query": query_param,"fuzziness": "AUTO"}}},
+                        {"match":{"tags": {"query": query_param,"fuzziness": "AUTO", "operator":"and"}}},
                     ],
                     "filter":[
                         {"term":{"is_active":"true"}},
